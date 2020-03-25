@@ -1,7 +1,6 @@
-package com.example.healthlog.ui.utils
+package com.example.healthlog.utils
 
 import android.util.Log
-import android.widget.CalendarView
 import androidx.databinding.BindingAdapter
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener

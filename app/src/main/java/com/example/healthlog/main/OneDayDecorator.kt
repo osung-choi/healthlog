@@ -1,4 +1,4 @@
-package com.example.healthlog.ui.main
+package com.example.healthlog.main
 
 import android.graphics.Color
 import android.graphics.Typeface
@@ -13,7 +13,7 @@ class OneDayDecorator : DayViewDecorator{
     private val date: CalendarDay = CalendarDay.today()
 
     override fun shouldDecorate(day: CalendarDay?): Boolean {
-        return date != null && day!!.equals(date)
+        return day!! == date
     }
 
     override fun decorate(view: DayViewFacade?) {

@@ -13,4 +13,6 @@
     <string name="home_second">Home Second</string>
     <string name="title">나의 운동일지</string>
     <string name="start_exersice">오늘 운동하기</string>
+
+    <string name="msg_cheer">오늘도 후회없는 운동을 진행합니다.</string>
 </resources>
