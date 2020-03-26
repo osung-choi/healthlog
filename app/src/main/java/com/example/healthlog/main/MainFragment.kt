@@ -50,6 +50,8 @@ class MainFragment : Fragment() {
         mainViewModel.startExcecise.observe(viewLifecycleOwner, Observer {
             Toast.makeText(context, getString(R.string.msg_cheer), Toast.LENGTH_SHORT).show()
             startActivity(Intent(context, TimerActivity::class.java))
+
+            activity!!.overridePendingTransition(R.anim.slide_right_in, R.anim.no_move) //showAnim , hideAnum
         })
 
     }

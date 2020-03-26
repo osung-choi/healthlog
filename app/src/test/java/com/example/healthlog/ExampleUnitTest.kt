@@ -12,6 +12,16 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-        assertEquals(4, 2 + 2)
+        assertEquals("1:0:1",makeTimeFormat(361))
+        assertEquals("1:1:1",makeTimeFormat(421))
+
+    }
+
+    private fun makeTimeFormat(time: Long) : String{
+        val hour = time/360
+        val minute = (time%360)/60
+        val second = (time%360)%60
+
+        return "${hour}:${minute}:${second}"
     }
 }
