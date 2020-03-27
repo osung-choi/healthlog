@@ -1,5 +1,6 @@
 package com.example.healthlog.timer
 
+import android.app.DatePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
@@ -8,7 +9,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.healthlog.R
 import com.example.healthlog.databinding.ActivityTimerBinding
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 import io.reactivex.rxjava3.disposables.Disposable
+import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class TimerActivity : AppCompatActivity() {
@@ -16,7 +23,7 @@ class TimerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTimerBinding
     private lateinit var timerViewModel: TimerViewModel
-    private var disposable: Disposable? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -47,6 +54,11 @@ class TimerActivity : AppCompatActivity() {
         actionBar?.setDisplayShowTitleEnabled(false) //기본 toolbar title 비활성화
 
         binding.toolbarTitle.text = getString(R.string.timer_title)
+
+        binding.npMinute.minValue = 0
+        binding.npMinute.maxValue = 60
+        binding.npSecond.minValue = 0
+        binding.npSecond.maxValue = 60
     }
 
     private fun initObserve() {

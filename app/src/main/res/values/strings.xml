@@ -17,7 +17,6 @@
     <string name="start_exersice">오늘 운동하기</string>
 
     <string name="msg_cheer">오늘도 후회없는 운동을 진행합니다.</string>
-    <string name="appwidget_text">EXAMPLE</string>
-    <string name="add_widget">Add widget</string>
+    <string name="btn_start">시작</string>
 
 </resources>

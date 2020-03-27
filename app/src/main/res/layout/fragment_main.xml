@@ -26,12 +26,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/start_exersice"
-            android:textStyle="bold"
-            android:textSize="15sp"
-            android:textColor="@android:color/white"
-            android:background="@color/colorPrimary"
             android:onClick="@{viewModel.startExerciseClick}"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            style="@style/AppTheme.Button"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
