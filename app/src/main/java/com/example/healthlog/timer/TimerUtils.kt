@@ -1,30 +1,60 @@
 package com.example.healthlog.timer
 
-import io.reactivex.rxjava3.core.Flowable
-import io.reactivex.rxjava3.core.FlowableTransformer
+import com.example.healthlog.timer.TimerUtils.lastTick
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.processors.PublishProcessor
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicLong
 
 
 object TimerUtils {
-    private var timerObserve : Observable<String>? = null
+    private val lastTick: AtomicLong = AtomicLong(0L)
+    private var pauseFlag = false
+    private var clearFlag = false
 
-    fun startTimer() : Observable<String>{
-        if(timerObserve == null) {
-            timerObserve = Observable.interval(0, 1, TimeUnit.MILLISECONDS)
-                .map { makeTimeFormat(it) }
-        }
-
-        return timerObserve!!
+    fun startTimer() : Observable<String> {
+        return Observable.interval(5, 1, TimeUnit.MILLISECONDS)
+            .map { makeTimeFormat(it) }
     }
 
-    private fun makeTimeFormat(time: Long) : String{
-         val hour = time / (1000 * 60 * 60)
-        val minute = time / (1000 * 60)
-        val second = time / (1000)
-        val ms = (time%1000) / 10 //두 자리만 표현
+    fun startStopWatch(minute: Int, second: Int) : Observable<Pair<Int,Int>> {
+        clearFlag = false
 
-        return String.format("%02d:%02d:%02d.%02d", hour, minute, second, ms)
+        return Observable.interval(5, 1, TimeUnit.MILLISECONDS)
+            .filter { !pauseFlag }
+            .map { lastTick.getAndIncrement() }
+            .map { ((minute * 60 * 1000) + second * 1000) - it }
+            .takeUntil { it < 1 || clearFlag}
+            .map { getMinuteAndSecond(it) }
+    }
+
+    fun pauseStopWatch() {
+        pauseFlag = true
+    }
+
+    fun restartStopWatch() {
+        pauseFlag = false
+    }
+
+    fun endStopWatch() {
+        lastTick.set(0L)
+        pauseFlag = false
+        clearFlag = true
+    }
+
+    private fun makeTimeFormat(time: Long) : String {
+        return SimpleDateFormat("HH:mm:ss.SS").let {
+            it.timeZone = TimeZone.getTimeZone("GMT")
+            it.format(Date(time))
+        }
+    }
+
+    private fun getMinuteAndSecond(time: Long) : Pair<Int,Int> {
+        return SimpleDateFormat("mm:ss").run {
+            this.timeZone = TimeZone.getTimeZone("GMT")
+            val split = this.format(Date(time)).split(":")
+            Pair(split[0].toInt(), split[1].toInt())
+        }
     }
 }

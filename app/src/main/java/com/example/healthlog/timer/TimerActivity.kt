@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.NumberPicker
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -32,7 +33,6 @@ class TimerActivity : AppCompatActivity() {
         binding.viewModel = timerViewModel
 
         initUi()
-        initObserve()
 
         timerViewModel.startTimer()
     }
@@ -56,13 +56,9 @@ class TimerActivity : AppCompatActivity() {
         binding.toolbarTitle.text = getString(R.string.timer_title)
 
         binding.npMinute.minValue = 0
-        binding.npMinute.maxValue = 60
+        binding.npMinute.maxValue = 14
         binding.npSecond.minValue = 0
-        binding.npSecond.maxValue = 60
-    }
-
-    private fun initObserve() {
-
+        binding.npSecond.maxValue = 59
     }
 
     override fun finish() {

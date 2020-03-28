@@ -1,11 +1,17 @@
 package com.example.healthlog.utils
 
+import android.content.Context
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.NumberPicker
+import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import androidx.databinding.ObservableBoolean
+import com.example.healthlog.R
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
+import kotlinx.android.synthetic.main.activity_timer.view.*
 
 object BindingAdapter {
 
@@ -13,7 +19,6 @@ object BindingAdapter {
     @BindingAdapter("setOnDateSelectedListener")
     fun setOnDateSelectedListener(calendar: MaterialCalendarView, onDayChange: OnDateSelectedListener?) {
         calendar.setOnDateChangedListener(onDayChange)
-        Log.d("zxc","asdzcs")
     }
 
     @JvmStatic
@@ -23,5 +28,46 @@ object BindingAdapter {
             view.visibility = View.VISIBLE
         else
             view.visibility = View.INVISIBLE
+    }
+
+    @JvmStatic
+    @BindingAdapter("setInitNumberPicker")
+    fun setInitNumberPicker(view: NumberPicker, value: Int) {
+        view.value = value
+    }
+
+    @JvmStatic
+    @BindingAdapter("setOnValueChangeListener")
+    fun setOnValueChangeListener(view: NumberPicker, listener: NumberPicker.OnValueChangeListener) {
+        view.setOnValueChangedListener(listener)
+    }
+
+    /**
+     * 현재는 토글버튼으로 BindingAdapter를 활용하여 구현하였다.
+     * 나중에 CustomView로 구현 해 볼것.
+     */
+    @JvmStatic
+    @BindingAdapter("changeStopWatchButton", "pauseStopWatchListener", "restartStopWatchListener")
+    fun changeStopWatchButton(view: Button,
+                              flag: Boolean,
+                              pauseListener: View.OnClickListener,
+                              restartListener: View.OnClickListener) {
+        val context = view.context
+
+        if(flag) {
+            view.text = context.getString(R.string.btn_pause)
+            view.background = context.getDrawable(R.drawable.round_red_button)
+            view.setOnClickListener(pauseListener)
+        }else {
+            view.text = context.getString(R.string.btn_restart)
+            view.background = context.getDrawable(R.drawable.round_primary_button)
+            view.setOnClickListener(restartListener)
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("setIntToTime")
+    fun setIntToTime(view: TextView, value: Int) {
+        view.text = String.format("%02d", value)
     }
 }

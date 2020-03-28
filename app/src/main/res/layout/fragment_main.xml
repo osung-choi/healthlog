@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:text="@string/start_exersice"
             android:onClick="@{viewModel.startExerciseClick}"
+            android:background="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
             style="@style/AppTheme.Button"/>
 

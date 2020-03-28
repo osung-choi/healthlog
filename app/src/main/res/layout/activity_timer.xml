@@ -83,7 +83,9 @@
                     android:id="@+id/npMinute"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:theme="@style/MyAppTheme.NumberPicker"/>
+                    android:theme="@style/MyAppTheme.NumberPicker"
+                    setOnValueChangeListener="@{viewModel.changeStopWatchMinute}"
+                    setInitNumberPicker="@{viewModel.mStopWatchMinute}"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -98,7 +100,9 @@
                     android:id="@+id/npSecond"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:theme="@style/MyAppTheme.NumberPicker"/>
+                    android:theme="@style/MyAppTheme.NumberPicker"
+                    setOnValueChangeListener="@{viewModel.changeStopWatchSecond}"
+                    setInitNumberPicker="@{viewModel.mStopWatchSecond}"/>
             </LinearLayout>
 
             <LinearLayout
@@ -110,13 +114,14 @@
                 app:layout_constraintRight_toRightOf="@id/layoutEditTimer"
                 app:layout_constraintTop_toTopOf="@id/layoutEditTimer"
                 app:layout_constraintBottom_toBottomOf="@id/layoutEditTimer"
-                setVisibility="@{viewModel.showSettingTimer}">
+                setVisibility="@{!viewModel.showEditTimer}">
 
                 <TextView
                     android:id="@+id/tvMinute"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:theme="@style/MyAppTheme.NumberPicker"/>
+                    android:theme="@style/MyAppTheme.NumberPicker"
+                    setIntToTime="@{viewModel.mStopWatchMinute}"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -131,19 +136,61 @@
                     android:id="@+id/tvSecond"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:theme="@style/MyAppTheme.NumberPicker"/>
+                    android:theme="@style/MyAppTheme.NumberPicker"
+                    setIntToTime="@{viewModel.mStopWatchSecond}"/>
             </LinearLayout>
 
             <Button
+                android:id="@+id/btnStopWatchStart"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="@{viewModel.startStopWatchClick}"
                 android:text="@string/btn_start"
+                android:background="@drawable/round_primary_button"
                 app:layout_constraintTop_toBottomOf="@id/layoutEditTimer"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                style="@style/AppTheme.RoundButton" />
+                style="@style/AppTheme.Button"
+                setVisibility="@{viewModel.showEditTimer}"/>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                setVisibility="@{!viewModel.showEditTimer}"
+
+                app:layout_constraintTop_toTopOf="@id/btnStopWatchStart"
+                app:layout_constraintBottom_toBottomOf="@id/btnStopWatchStart">
+
+                <!-- 현재는 토글버튼으로 BindingAdapter를 활용하여 구현하였다.
+                     나중에 CustomView로 구현 해 볼것.-->
+                <Button
+                    android:id="@+id/btnStopWatchPause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toLeftOf="@id/btnStopWatchClear"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    changeStopWatchButton="@{viewModel.mPauseStopWatch}"
+                    pauseStopWatchListener="@{viewModel.pauseStopWatchClick}"
+                    restartStopWatchListener="@{viewModel.restartStopWatchClick}"
+                    style="@style/AppTheme.Button"/>
+
+                <Button
+                    android:id="@+id/btnStopWatchClear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_black_button"
+                    android:text="@string/btn_clear"
+                    android:onClick="@{viewModel.clearStopWatchClick}"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/btnStopWatchPause"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    style="@style/AppTheme.Button"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -16,7 +16,10 @@
 
     <string name="start_exersice">오늘 운동하기</string>
 
-    <string name="msg_cheer">오늘도 후회없는 운동을 진행합니다.</string>
+    <string name="msg_cheer">운동을 시작합니다.</string>
     <string name="btn_start">시작</string>
+    <string name="btn_pause">중지</string>
+    <string name="btn_restart">계속</string>
+    <string name="btn_clear">초기화</string>
 
 </resources>

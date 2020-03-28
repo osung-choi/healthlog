@@ -29,14 +29,6 @@
 
     <style name="AppTheme.Button" parent="Widget.AppCompat.Button">
         <item name="android:textColor">@color/text_white</item>
-        <item name="android:background">@color/colorPrimary</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:textStyle">bold</item>
-    </style>
-
-    <style name="AppTheme.RoundButton" parent="Widget.AppCompat.Button">
-        <item name="android:textColor">@color/text_white</item>
-        <item name="android:background">@drawable/round_button</item>
         <item name="android:textSize">18sp</item>
         <item name="android:textStyle">bold</item>
     </style>
