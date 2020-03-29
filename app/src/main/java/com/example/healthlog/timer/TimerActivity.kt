@@ -1,8 +1,12 @@
 package com.example.healthlog.timer
 
 import android.app.DatePickerDialog
+import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.MenuItem
 import android.widget.NumberPicker
 import androidx.databinding.DataBindingUtil
@@ -33,8 +37,7 @@ class TimerActivity : AppCompatActivity() {
         binding.viewModel = timerViewModel
 
         initUi()
-
-        timerViewModel.startTimer()
+        initObserve()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -55,10 +58,29 @@ class TimerActivity : AppCompatActivity() {
 
         binding.toolbarTitle.text = getString(R.string.timer_title)
 
+        //얘내 위치는 음...
         binding.npMinute.minValue = 0
         binding.npMinute.maxValue = 14
         binding.npSecond.minValue = 0
         binding.npSecond.maxValue = 59
+    }
+
+    private fun initObserve() {
+        timerViewModel.mMinimalWindowStatus.observe(this, Observer {
+            if (Build.VERSION.SDK_INT >= 26) {
+                startForegroundService(Intent(this, TimerService::class.java))
+            }
+            else {
+                startService(Intent(this, TimerService::class.java))
+            }
+
+            startActivity(
+                Intent(Intent.ACTION_MAIN) //태스크의 첫 액티비티로 시작
+                    .addCategory(Intent.CATEGORY_HOME) //홈화면 표시
+                    .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK) //새로운 태스크를 생성하여 그 태스크안에서 액티비티 추가
+            )
+        })
+
     }
 
     override fun finish() {

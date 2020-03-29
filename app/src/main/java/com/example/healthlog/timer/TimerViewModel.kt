@@ -1,16 +1,27 @@
 package com.example.healthlog.timer
 
+import android.util.Log
 import android.view.View
 import android.widget.NumberPicker
 import androidx.databinding.ObservableBoolean
 import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.disposables.Disposable
 
 class TimerViewModel: ViewModel() {
     private val compositeDisposable = CompositeDisposable()
+
+    init {
+        startTimer()
+    }
+
+    private val _mMinimalWindowStatus = MutableLiveData<Boolean>() //최소화 여부
+    val mMinimalWindowStatus : LiveData<Boolean> = _mMinimalWindowStatus
 
     val exersiceAllTimer = ObservableField<String>()
     val showEditTimer = ObservableBoolean(true)
@@ -19,32 +30,33 @@ class TimerViewModel: ViewModel() {
     val mStopWatchMinute = ObservableInt(1)
     val mStopWatchSecond = ObservableInt(30)
 
+    private var lastMinute = 0
+    private var lastSecond = 0
+
     //시작 버튼 클릭
     val startStopWatchClick = View.OnClickListener {
-        val minute = mStopWatchMinute.get()
-        val second = mStopWatchSecond.get()
+        lastMinute = mStopWatchMinute.get()
+        lastSecond = mStopWatchSecond.get()
 
-        if(minute == 0 && second == 0) {
+        if(lastMinute == 0 && lastSecond == 0) {
             return@OnClickListener
         }
 
-        showEditTimer.set(false)
-
-        val source = TimerUtils.startStopWatch(minute, second)
-            .subscribe({
+        TimerUtils.setStopWatch(lastMinute, lastSecond)
+        val source = TimerUtils.startStopWatch()
+        val disposable = source?.subscribe({
                 mStopWatchMinute.set(it.first)
                 mStopWatchSecond.set(it.second)
             }, {
                 it.printStackTrace()
             }, {
                 TimerUtils.endStopWatch()
-                showEditTimer.set(true)
-
-                mStopWatchMinute.set(minute)
-                mStopWatchSecond.set(second)
             })
 
-        compositeDisposable.add(source)
+        if(source != null) {
+            showEditTimer.set(false)
+            compositeDisposable.add(disposable)
+        }
     }
 
     //중지 버튼 클릭
@@ -53,7 +65,7 @@ class TimerViewModel: ViewModel() {
         TimerUtils.pauseStopWatch()
     }
 
-    //계속 버튼 클
+    //계속 버튼 클릭
     val restartStopWatchClick = View.OnClickListener {
         mPauseStopWatch.set(true)
         TimerUtils.restartStopWatch()
@@ -71,7 +83,18 @@ class TimerViewModel: ViewModel() {
 
     //초기화 버튼 클
     val clearStopWatchClick = View.OnClickListener {
+
+        showEditTimer.set(true)
+
+        mStopWatchMinute.set(lastMinute)
+        mStopWatchSecond.set(lastSecond)
+
         TimerUtils.endStopWatch()
+    }
+
+    //최소화 클릭
+    val mMinWindowClick = View.OnClickListener {
+        _mMinimalWindowStatus.value = true
     }
 
     fun startTimer() {
