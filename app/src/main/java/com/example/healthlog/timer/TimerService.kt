@@ -8,32 +8,35 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
-import android.util.TimeUtils
 import androidx.core.app.NotificationCompat
-import com.example.healthlog.MainActivity
 import com.example.healthlog.R
-import java.util.*
+import com.example.healthlog.utils.PrefMananger
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 
 class TimerService: Service() {
     val CHANNEL_ID = "TimerService"
 
+    lateinit var mTimerImpl: TimerImpl
+
     lateinit var notificationManager: NotificationManager
     lateinit var builder: NotificationCompat.Builder
+
+    private var compositeDisposable = CompositeDisposable()
 
     override fun onCreate() {
         super.onCreate()
 
-        startForegroundService()
+        mTimerImpl = TimerUtils.Instance.getInstance()
 
-        stopWatch()
+        startForegroundService()
+        startExersice()
     }
 
     fun startForegroundService() {
 
         val notificationIntent = Intent(this, TimerActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
-        //val remoteViews = RemoteViews(packageName, R.layout.notification_service)
 
         notificationManager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
 
@@ -51,18 +54,43 @@ class TimerService: Service() {
         }
         builder
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentText("asd")
             .setContentIntent(pendingIntent)
         startForeground(1, builder.build())
     }
 
-    private fun stopWatch() {
-        TimerUtils.setStopWatch(1,30)
-        val source = TimerUtils.startStopWatch()
-        source?.subscribe {
-            builder.setContentText("${it.first}:${it.second}")
-            notificationManager.notify(1, builder.build())
-        }
+    private fun startExersice() {
+        val source = mTimerImpl.getTimerObserver()
+        source.subscribe()
+            //builder.setContentTitle(it)
+            //notificationManager.notify(1, builder.build())
+        compositeDisposable.add(
+            source.connect()
+        )
+
+        compositeDisposable.add(
+            mTimerImpl.getStopWatchSubject().subscribe {
+                builder.setContentText(String.format("%02d:%02d",it.first, it.second))
+                notificationManager.notify(1, builder.build())
+            }
+        )
+
+        compositeDisposable.add(
+            mTimerImpl.getStopWatchCompleteSubject().subscribe {
+                PrefMananger().setBoolean(this, PrefMananger.Key.PREF_TIMER_RUNNING, false)
+
+                builder.setContentText("대기 중")
+                notificationManager.notify(1, builder.build())
+            }
+        )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.dispose()
+        PrefMananger().setBoolean(this, PrefMananger.Key.PREF_TIMER_RUNNING, false)
+
+        mTimerImpl.endStopWatch()
+
     }
 
     override fun onBind(intent: Intent?): IBinder? {

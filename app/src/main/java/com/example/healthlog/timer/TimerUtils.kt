@@ -1,99 +1,118 @@
 package com.example.healthlog.timer
 
 
+import android.util.Log
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.Disposable
 import io.reactivex.rxjava3.observables.ConnectableObservable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
+import io.reactivex.rxjava3.subjects.Subject
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicLong
 
 
-object TimerUtils {
+class TimerUtils : TimerImpl {
+    object Instance {
+        private val timerUtils = TimerUtils()
+        fun getInstance() : TimerImpl {
+            return timerUtils
+        }
+    }
+
+    private constructor()
+
     private val lastTick: AtomicLong = AtomicLong(0L)
-    private var pauseFlag = false
-    private var clearFlag = false
+    private var playStopWatch = true
+    private var finishStopWatch = false
 
     private var minute = 0
     private var second = 0
 
-    private var stopWatchSubject : PublishSubject<Pair<Int, Int>>? = null
+    private val stopWatchSubject: BehaviorSubject<Pair<Int, Int>> = BehaviorSubject.create()
 
-    fun startTimer() : Observable<String> {
-        return Observable.interval(0, 1000, TimeUnit.MICROSECONDS)
-            .map { makeTimeFormat(it) }
+    private val stopWatchComplete: PublishSubject<Pair<Int, Int>> = PublishSubject.create()
+
+
+    private val timerObservable: ConnectableObservable<String> = Observable.interval(0, 1, TimeUnit.SECONDS)
+        .map {
+            Log.d("asd", makeTimeFormat(it))
+            makeTimeFormat(it) }
+        .publish()
+
+    private var stopWatchObservable = Observable.interval(0, 1, TimeUnit.SECONDS)
+        .filter { playStopWatch }
+        .map { lastTick.getAndIncrement() }
+        .map { ((minute * 60) + second) - it }
+        .takeUntil { it < 1 || finishStopWatch}
+        .map { getMinuteAndSecond(it) }
+
+    private var stopWatchDisposable: Disposable? = null
+
+    override fun getStopWatchSubject(): Subject<Pair<Int, Int>> {
+        return stopWatchSubject
     }
 
-    fun setStopWatch(minute: Int, second: Int) {
+    override fun getStopWatchCompleteSubject(): Subject<Pair<Int, Int>> {
+        return stopWatchComplete
+    }
+
+    override fun getTimerObserver(): ConnectableObservable<String> {
+        return timerObservable
+    }
+
+    override fun setStopWatchTime(minute: Int, second: Int) {
         this.minute = minute
         this.second = second
     }
 
-    fun startStopWatch() : PublishSubject<Pair<Int,Int>>? {
-        if(minute == 0 && second == 0) return null
+    override fun pauseStopWatch() {
+        playStopWatch = false
+    }
 
-        if(stopWatchSubject == null) {
-            clearFlag = false
+    override fun restartStopWatch() {
+        playStopWatch = true
+    }
 
-            stopWatchSubject = PublishSubject.create()
+    override fun startStopWatch() {
+        if(stopWatchDisposable == null || stopWatchDisposable!!.isDisposed) {
+            finishStopWatch = false
 
-            Observable.interval(0, 1, TimeUnit.SECONDS)
-                .filter { !pauseFlag }
-                .map { lastTick.getAndIncrement() }
-                .map { ((minute * 60) + second) - it }
-                .takeUntil { it < 1 || clearFlag}
-                .map { getMinuteAndSecond(it) }
-                .subscribe( {
-                    stopWatchSubject!!.onNext(it)
-                }, {
-                    stopWatchSubject!!.onError(it)
-                    stopWatchSubject = null
-                }, {
-                    stopWatchSubject!!.onComplete()
-                    stopWatchSubject = null
-                })
+            stopWatchDisposable = stopWatchObservable.subscribe( {
+                Log.d("asd","startStopWatch onNext ${it}")
+
+                stopWatchSubject.onNext(it)
+            }, {}, {
+                Log.d("asd","startStopWatch onComplete")
+                lastTick.set(0L)
+
+                stopWatchComplete.onNext(Pair(minute, second))
+            })
         }
-
-        else if(stopWatchSubject != null && clearFlag){
-            return null
-        }
-
-        return stopWatchSubject
     }
 
-    fun pauseStopWatch() {
-        pauseFlag = true
-    }
-
-    fun restartStopWatch() {
-        pauseFlag = false
-    }
-
-    fun endStopWatch() {
-        lastTick.set(0L)
-        pauseFlag = false
-        clearFlag = true
+    override fun endStopWatch() {
+        finishStopWatch = true
     }
 
     private fun makeTimeFormat(time: Long) : String {
-        return SimpleDateFormat("HH:mm:ss.SS").let {
+        val milliTime = time * 1000
+
+        return SimpleDateFormat("HH:mm:ss").let {
             it.timeZone = TimeZone.getTimeZone("GMT")
-            it.format(Date(time))
+            it.format(Date(milliTime))
         }
     }
 
     private fun getMinuteAndSecond(time: Long) : Pair<Int,Int> {
-        val minute = time / 60
-        val second = time % 60
-        return Pair(minute.toInt(), second.toInt())
-    }
+        val milliTime = time * 1000
 
-//    private fun getMinuteAndSecond(time: Long) : Pair<Int,Int> {
-//        return SimpleDateFormat("mm:ss").run {
-//            this.timeZone = TimeZone.getTimeZone("GMT")
-//            val split = this.format(Date(time)).split(":")
-//            Pair(split[0].toInt(), split[1].toInt())
-//        }
-//    }
+        return SimpleDateFormat("mm:ss").run {
+            this.timeZone = TimeZone.getTimeZone("GMT")
+            val split = this.format(Date(milliTime)).split(":")
+            Pair(split[0].toInt(), split[1].toInt())
+        }
+    }
 }

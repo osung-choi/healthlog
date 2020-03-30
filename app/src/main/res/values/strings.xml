@@ -22,4 +22,8 @@
     <string name="btn_restart">계속</string>
     <string name="btn_clear">초기화</string>
 
+    <string name="dialog_continue_exersice">운동을 계속 하실껀가요?</string>
+    <string name="dialog_btn_continue">계속</string>
+    <string name="dialog_btn_finish">종료</string>
+
 </resources>
