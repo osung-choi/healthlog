@@ -8,9 +8,11 @@ import android.content.SharedPreferences
 
 class PrefMananger {
     object Key {
-        val PREF_STOPWATCH_MINUTE = "PREF_STOPWATCH_MINUTE"
-        val PREF_STOPWATCH_SECOND = "PREF_STOPWATCH_SECOND"
-        val PREF_TIMER_RUNNING = "PREF_TIMER_RUNNING"
+        const val PREF_STOPWATCH_MINUTE = "PREF_STOPWATCH_MINUTE"
+        const val PREF_STOPWATCH_SECOND = "PREF_STOPWATCH_SECOND"
+
+        const val PREF_STOPWATCH_PLAYING_MINUTE = "PREF_STOPWATCH_MINUTE" //마지막 재생중인
+        const val PREF_STOPWATCH_PLAYING_SECOND = "PREF_STOPWATCH_SECOND"
     }
     private val PREFERENCES_NAME = "healthlog_pref"
 

@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
@@ -63,8 +64,7 @@ class TimerActivity : AppCompatActivity() {
         val minute = prefManager.getInt(this, PrefMananger.Key.PREF_STOPWATCH_MINUTE)
         val second = prefManager.getInt(this, PrefMananger.Key.PREF_STOPWATCH_SECOND)
 
-        val serviceRunning = PrefMananger().getBoolean(this, PrefMananger.Key.PREF_TIMER_RUNNING)
-        timerViewModel.initViewModel(serviceRunning, minute, second)
+        timerViewModel.initViewModel(minute, second)
 
         //얘내 위치는 음...
         binding.npMinute.minValue = 0
@@ -78,8 +78,6 @@ class TimerActivity : AppCompatActivity() {
             val prefManager = PrefMananger()
             prefManager.setInt(this, PrefMananger.Key.PREF_STOPWATCH_MINUTE, it.first)
             prefManager.setInt(this, PrefMananger.Key.PREF_STOPWATCH_SECOND, it.second)
-
-            prefManager.setBoolean(this, PrefMananger.Key.PREF_TIMER_RUNNING, true)
         })
 
         timerViewModel.mMinimalWindowStatus.observe(this, Observer {

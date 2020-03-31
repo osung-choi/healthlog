@@ -24,23 +24,15 @@ class TimerUtils : TimerImpl {
 
     private constructor()
 
-    private val lastTick: AtomicLong = AtomicLong(0L)
-    private var playStopWatch = true
-    private var finishStopWatch = false
-
-    private var minute = 0
-    private var second = 0
-
     private val stopWatchSubject: BehaviorSubject<Pair<Int, Int>> = BehaviorSubject.create()
 
-    private val stopWatchComplete: PublishSubject<Pair<Int, Int>> = PublishSubject.create()
+    private val stopWatchComplete: PublishSubject<Boolean> = PublishSubject.create()
 
+    private val timerSubject: BehaviorSubject<String> = BehaviorSubject.create()
 
-    private val timerObservable: ConnectableObservable<String> = Observable.interval(0, 1, TimeUnit.SECONDS)
-        .map {
-            Log.d("asd", makeTimeFormat(it))
-            makeTimeFormat(it) }
-        .publish()
+    private val timerObserver = Observable.interval(0, 1, TimeUnit.SECONDS)
+        .takeUntil{ finishTimer }
+        .map { makeTimeFormat(it) }
 
     private var stopWatchObservable = Observable.interval(0, 1, TimeUnit.SECONDS)
         .filter { playStopWatch }
@@ -49,18 +41,37 @@ class TimerUtils : TimerImpl {
         .takeUntil { it < 1 || finishStopWatch}
         .map { getMinuteAndSecond(it) }
 
+    private val lastTick: AtomicLong = AtomicLong(0L)
+    private var playStopWatch = true
+    private var finishStopWatch = false
+    private var finishTimer = false
+
+    private var minute = 0
+    private var second = 0
+
     private var stopWatchDisposable: Disposable? = null
 
     override fun getStopWatchSubject(): Subject<Pair<Int, Int>> {
         return stopWatchSubject
     }
 
-    override fun getStopWatchCompleteSubject(): Subject<Pair<Int, Int>> {
+    override fun getStopWatchCompleteSubject(): Subject<Boolean> {
         return stopWatchComplete
     }
 
-    override fun getTimerObserver(): ConnectableObservable<String> {
-        return timerObservable
+    override fun getTimerSubject(): Subject<String> {
+        return timerSubject
+    }
+
+    override fun startTimer() {
+        finishTimer = false
+        timerObserver.subscribe {
+            timerSubject.onNext(it)
+        }
+    }
+
+    override fun endTimer() {
+        finishTimer = true
     }
 
     override fun setStopWatchTime(minute: Int, second: Int) {
@@ -80,15 +91,9 @@ class TimerUtils : TimerImpl {
         if(stopWatchDisposable == null || stopWatchDisposable!!.isDisposed) {
             finishStopWatch = false
 
-            stopWatchDisposable = stopWatchObservable.subscribe( {
-                Log.d("asd","startStopWatch onNext ${it}")
-
-                stopWatchSubject.onNext(it)
-            }, {}, {
-                Log.d("asd","startStopWatch onComplete")
+            stopWatchDisposable = stopWatchObservable.subscribe( { stopWatchSubject.onNext(it) }, {}, {
                 lastTick.set(0L)
-
-                stopWatchComplete.onNext(Pair(minute, second))
+                stopWatchComplete.onNext(true)
             })
         }
     }

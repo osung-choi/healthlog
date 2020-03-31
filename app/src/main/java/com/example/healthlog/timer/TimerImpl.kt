@@ -5,9 +5,11 @@ import io.reactivex.rxjava3.subjects.Subject
 
 interface TimerImpl {
     fun getStopWatchSubject(): Subject<Pair<Int, Int>>
-    fun getStopWatchCompleteSubject() : Subject<Pair<Int, Int>>
-    fun getTimerObserver() : ConnectableObservable<String>
+    fun getStopWatchCompleteSubject() : Subject<Boolean>
+    fun getTimerSubject() : Subject<String>
 
+    fun startTimer()
+    fun endTimer()
     fun setStopWatchTime(minute: Int, second: Int)
     fun startStopWatch()
     fun pauseStopWatch()

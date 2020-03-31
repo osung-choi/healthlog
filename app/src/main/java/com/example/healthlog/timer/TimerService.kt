@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.example.healthlog.R
 import com.example.healthlog.utils.PrefMananger
@@ -40,7 +41,10 @@ class TimerService: Service() {
 
         notificationManager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
 
-        if (Build.VERSION.SDK_INT >= 26) {
+        val contentView = RemoteViews(packageName, R.layout.notification_stopwatch)
+        //PendingIntent.getActivities(this, 0, )
+
+        builder = if (Build.VERSION.SDK_INT >= 26) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
                 "SnowDeer Service Channel",
@@ -48,24 +52,23 @@ class TimerService: Service() {
             )
 
             notificationManager.createNotificationChannel(channel)
-            builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            NotificationCompat.Builder(this, CHANNEL_ID)
         } else {
-            builder = NotificationCompat.Builder(this)
-        }
-        builder
-            .setSmallIcon(R.mipmap.ic_launcher)
+            NotificationCompat.Builder(this)
+
+        }.setSmallIcon(R.mipmap.ic_launcher)
+            .setCustomContentView(contentView)
             .setContentIntent(pendingIntent)
+
         startForeground(1, builder.build())
     }
 
     private fun startExersice() {
-        val source = mTimerImpl.getTimerObserver()
-        source.subscribe()
-            //builder.setContentTitle(it)
-            //notificationManager.notify(1, builder.build())
         compositeDisposable.add(
-            source.connect()
+            mTimerImpl.getTimerSubject().subscribe()
         )
+
+        mTimerImpl.startTimer()
 
         compositeDisposable.add(
             mTimerImpl.getStopWatchSubject().subscribe {
@@ -76,7 +79,10 @@ class TimerService: Service() {
 
         compositeDisposable.add(
             mTimerImpl.getStopWatchCompleteSubject().subscribe {
-                PrefMananger().setBoolean(this, PrefMananger.Key.PREF_TIMER_RUNNING, false)
+
+                val prefManager = PrefMananger()
+                val minute = prefManager.getInt(this, PrefMananger.Key.PREF_STOPWATCH_MINUTE)
+                val second = prefManager.getInt(this, PrefMananger.Key.PREF_STOPWATCH_SECOND)
 
                 builder.setContentText("대기 중")
                 notificationManager.notify(1, builder.build())
@@ -87,10 +93,9 @@ class TimerService: Service() {
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.dispose()
-        PrefMananger().setBoolean(this, PrefMananger.Key.PREF_TIMER_RUNNING, false)
 
+        mTimerImpl.endTimer()
         mTimerImpl.endStopWatch()
-
     }
 
     override fun onBind(intent: Intent?): IBinder? {

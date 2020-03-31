@@ -1,5 +1,6 @@
 package com.example.healthlog.timer
 
+import android.util.Log
 import android.view.View
 import android.widget.NumberPicker
 import androidx.databinding.ObservableBoolean
@@ -24,13 +25,16 @@ class TimerViewModel: ViewModel() {
     val mStopWatchMinute = ObservableInt(0)
     val mStopWatchSecond = ObservableInt(0)
 
+    var lastMinute = 0
+    var lastSecond = 0
+
     private val compositeDisposable = CompositeDisposable()
 
     private val timerImpl = TimerUtils.Instance.getInstance()
 
     init {
         compositeDisposable.add(
-            timerImpl.getTimerObserver()
+            timerImpl.getTimerSubject()
                 .subscribe { exersiceAllTimer.set(it) }
         )
 
@@ -47,30 +51,28 @@ class TimerViewModel: ViewModel() {
             timerImpl.getStopWatchCompleteSubject().subscribe {
                 showEditTimer.set(true)
 
-                mStopWatchMinute.set(it.first)
-                mStopWatchSecond.set(it.second)
+                mStopWatchMinute.set(lastMinute)
+                mStopWatchSecond.set(lastSecond)
             }
         )
     }
 
     //시작 버튼 클릭
     val startStopWatchClick = View.OnClickListener {
-        val minute = mStopWatchMinute.get()
-        val second = mStopWatchSecond.get()
+        lastMinute = mStopWatchMinute.get()
+        lastSecond = mStopWatchSecond.get()
 
-        _mStartStopWatch.setValue(Pair(minute, second)) //마지막 시간 저장
+        _mStartStopWatch.setValue(Pair(lastMinute, lastSecond)) //마지막 시간 저장
 
-        timerImpl.setStopWatchTime(minute, second)
+        timerImpl.setStopWatchTime(lastMinute, lastSecond)
         timerImpl.startStopWatch()
 
         showEditTimer.set(false)
     }
 
-    fun initViewModel(serviceRunning: Boolean, minute: Int, second: Int) {
-        showEditTimer.set(!serviceRunning)
-
-        mStopWatchMinute.set(minute)
-        mStopWatchSecond.set(second)
+    fun initViewModel(minute: Int, second: Int) {
+        lastMinute = minute
+        lastSecond = second
     }
 
     //중지 버튼 클릭
