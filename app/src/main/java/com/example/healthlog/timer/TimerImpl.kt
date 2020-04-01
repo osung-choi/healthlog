@@ -8,7 +8,7 @@ interface TimerImpl {
     fun getTimerSubject() : Subject<String>
     fun getPauseStopWatchSubject() : Subject<Boolean>
 
-    fun isFinishStopWatch(): Boolean
+    fun isFinishStopWatch(): Boolean //이 함수가 잘못됬음... 일단 넘어가자
     fun startTimer()
     fun endTimer()
     fun setStopWatchTime(minute: Int, second: Int)
