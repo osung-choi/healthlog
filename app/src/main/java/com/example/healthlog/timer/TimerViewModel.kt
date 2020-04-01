@@ -39,9 +39,11 @@ class TimerViewModel: ViewModel() {
         )
 
         compositeDisposable.add(
-            timerImpl.getStopWatchSubject().subscribe{
-                showEditTimer.set(false)
+            timerImpl.getStopWatchSubject()
+                .filter { !timerImpl.isFinishStopWatch() }
+                .subscribe{
                 mPauseStopWatch.set(true)
+                showEditTimer.set(false)
 
                 mStopWatchMinute.set(it.first)
                 mStopWatchSecond.set(it.second)
@@ -49,17 +51,20 @@ class TimerViewModel: ViewModel() {
         )
 
         compositeDisposable.add(
-            timerImpl.getStopWatchCompleteSubject().subscribe {
+            timerImpl.getStopWatchCompleteSubject()
+                .subscribe {
                 showEditTimer.set(true)
 
                 mStopWatchMinute.set(lastMinute)
                 mStopWatchSecond.set(lastSecond)
+
+                Log.d("asd", "$it, $lastMinute, $lastSecond")
             }
         )
 
         compositeDisposable.add(
             timerImpl.getPauseStopWatchSubject().subscribe {
-                mPauseStopWatch.set(false)
+                mPauseStopWatch.set(!it)
             }
         )
     }
@@ -75,17 +80,23 @@ class TimerViewModel: ViewModel() {
         timerImpl.startStopWatch()
 
         showEditTimer.set(false)
+        mPauseStopWatch.set(true)
     }
 
     fun initViewModel(minute: Int, second: Int) {
-        lastMinute = minute
-        lastSecond = second
+        if(timerImpl.isFinishStopWatch()) {
+            mStopWatchMinute.set(minute)
+            mStopWatchSecond.set(second)
+
+            lastMinute = minute
+            lastSecond = second
+        }
     }
 
     //중지 버튼 클릭
     val pauseStopWatchClick = View.OnClickListener {
         mPauseStopWatch.set(false)
-        timerImpl.pauseStopWatch()
+        timerImpl.pauseStopWatch(true)
     }
 
     //계속 버튼 클릭

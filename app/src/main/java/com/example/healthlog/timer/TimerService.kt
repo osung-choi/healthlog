@@ -108,7 +108,9 @@ class TimerService: Service() {
         mTimerImpl.startTimer()
 
         compositeDisposable.add(
-            mTimerImpl.getStopWatchSubject().subscribe ({
+            mTimerImpl.getStopWatchSubject()
+                .filter { !mTimerImpl.isFinishStopWatch() }
+                .subscribe ({
                 isStopWatchPlaying = true
 
                 updatePlayButton()
@@ -119,7 +121,9 @@ class TimerService: Service() {
         )
 
         compositeDisposable.add(
-            mTimerImpl.getStopWatchCompleteSubject().subscribe {
+            mTimerImpl.getStopWatchCompleteSubject()
+                .filter { it }
+                .subscribe {
                 stopWatchComplete()
             }
         )
@@ -131,15 +135,23 @@ class TimerService: Service() {
                 updatePlayButton()
             }
         )
+
+        if(mTimerImpl.isFinishStopWatch()) {
+            setLastStopWatch()
+        }
     }
 
     private fun stopWatchComplete() {
+        isStopWatchPlaying = false
+        updatePlayButton()
+        setLastStopWatch()
+    }
+
+    private fun setLastStopWatch() {
         val prefManager = PrefMananger()
         val minute = prefManager.getInt(this, PrefMananger.Key.PREF_STOPWATCH_MINUTE)
         val second = prefManager.getInt(this, PrefMananger.Key.PREF_STOPWATCH_SECOND)
 
-        isStopWatchPlaying = false
-        updatePlayButton()
         updateStopWatchTime(minute, second)
     }
 
@@ -149,7 +161,6 @@ class TimerService: Service() {
 
         mTimerImpl.endTimer()
         mTimerImpl.endStopWatch()
-        //mTimerImpl.clearSubject()
 
         unregisterReceiver(mReceiver)
     }
@@ -167,7 +178,7 @@ class TimerService: Service() {
                     if(isStopWatchPlaying) {
                         isStopWatchPlaying = false
 
-                        mTimerImpl.pauseStopWatch()
+                        mTimerImpl.pauseStopWatch(true)
                     }else {
                         isStopWatchPlaying = true
 

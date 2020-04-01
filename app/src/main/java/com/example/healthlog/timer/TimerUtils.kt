@@ -1,10 +1,8 @@
 package com.example.healthlog.timer
 
 
-import android.util.Log
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.observables.ConnectableObservable
 import io.reactivex.rxjava3.subjects.BehaviorSubject
 import io.reactivex.rxjava3.subjects.PublishSubject
 import io.reactivex.rxjava3.subjects.Subject
@@ -22,26 +20,24 @@ class TimerUtils : TimerImpl {
         }
     }
 
-    private constructor()
-
-    private var stopWatchSubject: BehaviorSubject<Pair<Int, Int>> = BehaviorSubject.create()
-    private var stopWatchComplete: PublishSubject<Boolean> = PublishSubject.create()
-    private var timerSubject: BehaviorSubject<String> = BehaviorSubject.create()
-    private var pauseStopWatchSubject: PublishSubject<Boolean> = PublishSubject.create()
+    private var stopWatchSubject: Subject<Pair<Int, Int>> = BehaviorSubject.create()
+    private var stopWatchComplete: Subject<Boolean> = PublishSubject.create()
+    private var timerSubject: Subject<String> = BehaviorSubject.create()
+    private var pauseStopWatchSubject: Subject<Boolean> = BehaviorSubject.create()
 
     private val timerObserver = Observable.interval(0, 1, TimeUnit.SECONDS)
         .takeUntil{ finishTimer }
         .map { makeTimeFormat(it) }
 
     private var stopWatchObservable = Observable.interval(0, 1, TimeUnit.SECONDS)
-        .filter { playStopWatch }
+        .filter { !pauseStopWatch }
         .map { lastTick.getAndIncrement() }
         .map { ((minute * 60) + second) - it }
         .takeUntil { it < 1 || finishStopWatch}
         .map { getMinuteAndSecond(it) }
 
     private val lastTick: AtomicLong = AtomicLong(0L)
-    private var playStopWatch = true
+    private var pauseStopWatch = false
     private var finishStopWatch = false
     private var finishTimer = false
 
@@ -50,34 +46,11 @@ class TimerUtils : TimerImpl {
 
     private var stopWatchDisposable: Disposable? = null
 
-    override fun clearSubject() {
-        stopWatchSubject.onComplete()
-        stopWatchComplete.onComplete()
-        timerSubject.onComplete()
-        pauseStopWatchSubject.onComplete()
-
-
-        stopWatchSubject = BehaviorSubject.create()
-        stopWatchComplete = PublishSubject.create()
-        timerSubject =  BehaviorSubject.create()
-        pauseStopWatchSubject = PublishSubject.create()
-    }
-
-    override fun getStopWatchSubject(): Subject<Pair<Int, Int>> {
-        return stopWatchSubject
-    }
-
-    override fun getStopWatchCompleteSubject(): Subject<Boolean> {
-        return stopWatchComplete
-    }
-
-    override fun getTimerSubject(): Subject<String> {
-        return timerSubject
-    }
-
-    override fun getPauseStopWatchSubject(): Subject<Boolean> {
-        return pauseStopWatchSubject
-    }
+    override fun isFinishStopWatch() = finishStopWatch
+    override fun getStopWatchSubject() = stopWatchSubject
+    override fun getStopWatchCompleteSubject() = stopWatchComplete
+    override fun getTimerSubject() = timerSubject
+    override fun getPauseStopWatchSubject() = pauseStopWatchSubject
 
     override fun startTimer() {
         finishTimer = false
@@ -95,15 +68,14 @@ class TimerUtils : TimerImpl {
         this.second = second
     }
 
-    override fun pauseStopWatch() {
-        playStopWatch = false
-
-        pauseStopWatchSubject.onNext(true)
+    override fun pauseStopWatch(isPause: Boolean) {
+        pauseStopWatch = isPause
+        pauseStopWatchSubject.onNext(isPause)
     }
 
     override fun startStopWatch() {
-        if(!playStopWatch) {
-            playStopWatch = true
+        if(pauseStopWatch) {
+            pauseStopWatch = false
 
         } else if(stopWatchDisposable == null || stopWatchDisposable!!.isDisposed) {
             finishStopWatch = false
@@ -116,7 +88,7 @@ class TimerUtils : TimerImpl {
     }
 
     override fun endStopWatch() {
-        playStopWatch = true
+        pauseStopWatch = false
         finishStopWatch = true
     }
 
