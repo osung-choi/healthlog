@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="80dp"
     android:orientation="horizontal">
 
     <ImageView
@@ -13,37 +13,41 @@
 
     <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_gravity="center_vertical"
+
         android:gravity="center">
 
         <TextView
             android:id="@+id/tvStopWatchTime"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="44dp"
-            android:gravity="center_vertical"
-            android:text="14:00"
+            android:gravity="center"
             android:textColor="@color/text_black"
-            android:textSize="18sp" />
+            android:textSize="20sp"
+            android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@id/btnNotiPlay"
+            android:text="00:00"/>
 
         <ImageButton
             android:id="@+id/btnNotiPlay"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="40dp"
             android:layout_gravity="center_vertical"
             android:src="@drawable/icon_play"
             android:background="@android:color/transparent"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@id/btnNotiPause"/>
+            android:layout_toLeftOf="@id/btnNotiStop"/>
 
         <ImageButton
-            android:id="@+id/btnNotiPause"
-            android:layout_width="wrap_content"
+            android:id="@+id/btnNotiStop"
+            android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/icon_pause"
+            android:layout_marginRight="40dp"
+            android:src="@drawable/icon_stop"
             android:background="@android:color/transparent"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"/>

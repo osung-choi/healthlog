@@ -1,13 +1,13 @@
 package com.example.healthlog.timer
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.example.healthlog.R
@@ -16,12 +16,18 @@ import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 
 class TimerService: Service() {
-    val CHANNEL_ID = "TimerService"
+    val ACTION_TOGGLE_PLAY = "com.example.healthlog.ACTION_TOGGLE_PLAY"
+    val ACTION_STOP = "com.example.healthlog.ACTION_STOP"
+    
+    private val CHANNEL_ID = "TimerService"
 
     lateinit var mTimerImpl: TimerImpl
 
     lateinit var notificationManager: NotificationManager
     lateinit var builder: NotificationCompat.Builder
+    lateinit var remoteViews : RemoteViews
+
+    var isStopWatchPlaying = false
 
     private var compositeDisposable = CompositeDisposable()
 
@@ -30,19 +36,23 @@ class TimerService: Service() {
 
         mTimerImpl = TimerUtils.Instance.getInstance()
 
+        val intentfilter = IntentFilter()
+        intentfilter.addAction(ACTION_TOGGLE_PLAY)
+        intentfilter.addAction(ACTION_STOP)
+
+        registerReceiver(mReceiver, intentfilter)
+
         startForegroundService()
         startExersice()
     }
 
     fun startForegroundService() {
-
         val notificationIntent = Intent(this, TimerActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0)
 
         notificationManager = (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
 
-        val contentView = RemoteViews(packageName, R.layout.notification_stopwatch)
-        //PendingIntent.getActivities(this, 0, )
+        createRemoteView(R.layout.notification_stopwatch)
 
         builder = if (Build.VERSION.SDK_INT >= 26) {
             val channel = NotificationChannel(
@@ -57,10 +67,37 @@ class TimerService: Service() {
             NotificationCompat.Builder(this)
 
         }.setSmallIcon(R.mipmap.ic_launcher)
-            .setCustomContentView(contentView)
+            .setCustomContentView(remoteViews)
             .setContentIntent(pendingIntent)
 
         startForeground(1, builder.build())
+    }
+
+    fun createRemoteView(layoutId : Int) {
+        remoteViews = RemoteViews(packageName, layoutId)
+        val actionTogglePlay = Intent(ACTION_TOGGLE_PLAY)
+        val actionStop = Intent(ACTION_STOP)
+
+        val togglePlay = PendingIntent.getBroadcast(this, 0, actionTogglePlay, 0)
+        val stop = PendingIntent.getBroadcast(this, 0, actionStop, 0)
+
+        remoteViews.setOnClickPendingIntent(R.id.btnNotiPlay, togglePlay)
+        remoteViews.setOnClickPendingIntent(R.id.btnNotiStop, stop)
+    }
+
+    private fun updatePlayButton() {
+        if(isStopWatchPlaying) {
+            remoteViews.setImageViewResource(R.id.btnNotiPlay, R.drawable.icon_pause)
+        }else {
+            remoteViews.setImageViewResource(R.id.btnNotiPlay, R.drawable.icon_play)
+        }
+
+        notificationManager.notify(1, builder.build())
+    }
+
+    private fun updateStopWatchTime(minute: Int, second: Int) {
+        remoteViews.setTextViewText(R.id.tvStopWatchTime, String.format("%02d:%02d",minute, second))
+        notificationManager.notify(1, builder.build())
     }
 
     private fun startExersice() {
@@ -71,23 +108,39 @@ class TimerService: Service() {
         mTimerImpl.startTimer()
 
         compositeDisposable.add(
-            mTimerImpl.getStopWatchSubject().subscribe {
-                builder.setContentText(String.format("%02d:%02d",it.first, it.second))
-                notificationManager.notify(1, builder.build())
-            }
+            mTimerImpl.getStopWatchSubject().subscribe ({
+                isStopWatchPlaying = true
+
+                updatePlayButton()
+                updateStopWatchTime(it.first, it.second)
+            }, { }, {
+                stopWatchComplete()
+            })
         )
 
         compositeDisposable.add(
             mTimerImpl.getStopWatchCompleteSubject().subscribe {
-
-                val prefManager = PrefMananger()
-                val minute = prefManager.getInt(this, PrefMananger.Key.PREF_STOPWATCH_MINUTE)
-                val second = prefManager.getInt(this, PrefMananger.Key.PREF_STOPWATCH_SECOND)
-
-                builder.setContentText("대기 중")
-                notificationManager.notify(1, builder.build())
+                stopWatchComplete()
             }
         )
+
+        compositeDisposable.add(
+            mTimerImpl.getPauseStopWatchSubject().subscribe {
+                isStopWatchPlaying = false
+
+                updatePlayButton()
+            }
+        )
+    }
+
+    private fun stopWatchComplete() {
+        val prefManager = PrefMananger()
+        val minute = prefManager.getInt(this, PrefMananger.Key.PREF_STOPWATCH_MINUTE)
+        val second = prefManager.getInt(this, PrefMananger.Key.PREF_STOPWATCH_SECOND)
+
+        isStopWatchPlaying = false
+        updatePlayButton()
+        updateStopWatchTime(minute, second)
     }
 
     override fun onDestroy() {
@@ -96,9 +149,41 @@ class TimerService: Service() {
 
         mTimerImpl.endTimer()
         mTimerImpl.endStopWatch()
+        //mTimerImpl.clearSubject()
+
+        unregisterReceiver(mReceiver)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
+    }
+
+    val mReceiver = object: BroadcastReceiver() {
+        override fun onReceive(p0: Context?, p1: Intent?) {
+            when(p1!!.action) {
+                ACTION_TOGGLE_PLAY -> {
+                    Log.d("TAG","ACTION_TOGGLE_PLAY")
+
+                    if(isStopWatchPlaying) {
+                        isStopWatchPlaying = false
+
+                        mTimerImpl.pauseStopWatch()
+                    }else {
+                        isStopWatchPlaying = true
+
+                        mTimerImpl.startStopWatch()
+                    }
+
+                    updatePlayButton()
+                }
+
+                ACTION_STOP -> {
+                    Log.d("TAG","ACTION_STOP")
+
+                    mTimerImpl.endStopWatch()
+                }
+            }
+        }
+
     }
 }

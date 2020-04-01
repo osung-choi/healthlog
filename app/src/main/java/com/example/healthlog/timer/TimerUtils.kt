@@ -24,11 +24,10 @@ class TimerUtils : TimerImpl {
 
     private constructor()
 
-    private val stopWatchSubject: BehaviorSubject<Pair<Int, Int>> = BehaviorSubject.create()
-
-    private val stopWatchComplete: PublishSubject<Boolean> = PublishSubject.create()
-
-    private val timerSubject: BehaviorSubject<String> = BehaviorSubject.create()
+    private var stopWatchSubject: BehaviorSubject<Pair<Int, Int>> = BehaviorSubject.create()
+    private var stopWatchComplete: PublishSubject<Boolean> = PublishSubject.create()
+    private var timerSubject: BehaviorSubject<String> = BehaviorSubject.create()
+    private var pauseStopWatchSubject: PublishSubject<Boolean> = PublishSubject.create()
 
     private val timerObserver = Observable.interval(0, 1, TimeUnit.SECONDS)
         .takeUntil{ finishTimer }
@@ -51,6 +50,19 @@ class TimerUtils : TimerImpl {
 
     private var stopWatchDisposable: Disposable? = null
 
+    override fun clearSubject() {
+        stopWatchSubject.onComplete()
+        stopWatchComplete.onComplete()
+        timerSubject.onComplete()
+        pauseStopWatchSubject.onComplete()
+
+
+        stopWatchSubject = BehaviorSubject.create()
+        stopWatchComplete = PublishSubject.create()
+        timerSubject =  BehaviorSubject.create()
+        pauseStopWatchSubject = PublishSubject.create()
+    }
+
     override fun getStopWatchSubject(): Subject<Pair<Int, Int>> {
         return stopWatchSubject
     }
@@ -61,6 +73,10 @@ class TimerUtils : TimerImpl {
 
     override fun getTimerSubject(): Subject<String> {
         return timerSubject
+    }
+
+    override fun getPauseStopWatchSubject(): Subject<Boolean> {
+        return pauseStopWatchSubject
     }
 
     override fun startTimer() {
@@ -81,14 +97,15 @@ class TimerUtils : TimerImpl {
 
     override fun pauseStopWatch() {
         playStopWatch = false
-    }
 
-    override fun restartStopWatch() {
-        playStopWatch = true
+        pauseStopWatchSubject.onNext(true)
     }
 
     override fun startStopWatch() {
-        if(stopWatchDisposable == null || stopWatchDisposable!!.isDisposed) {
+        if(!playStopWatch) {
+            playStopWatch = true
+
+        } else if(stopWatchDisposable == null || stopWatchDisposable!!.isDisposed) {
             finishStopWatch = false
 
             stopWatchDisposable = stopWatchObservable.subscribe( { stopWatchSubject.onNext(it) }, {}, {
@@ -99,6 +116,7 @@ class TimerUtils : TimerImpl {
     }
 
     override fun endStopWatch() {
+        playStopWatch = true
         finishStopWatch = true
     }
 

@@ -41,6 +41,7 @@ class TimerViewModel: ViewModel() {
         compositeDisposable.add(
             timerImpl.getStopWatchSubject().subscribe{
                 showEditTimer.set(false)
+                mPauseStopWatch.set(true)
 
                 mStopWatchMinute.set(it.first)
                 mStopWatchSecond.set(it.second)
@@ -53,6 +54,12 @@ class TimerViewModel: ViewModel() {
 
                 mStopWatchMinute.set(lastMinute)
                 mStopWatchSecond.set(lastSecond)
+            }
+        )
+
+        compositeDisposable.add(
+            timerImpl.getPauseStopWatchSubject().subscribe {
+                mPauseStopWatch.set(false)
             }
         )
     }
@@ -84,7 +91,7 @@ class TimerViewModel: ViewModel() {
     //계속 버튼 클릭
     val restartStopWatchClick = View.OnClickListener {
         mPauseStopWatch.set(true)
-        timerImpl.restartStopWatch()
+        timerImpl.startStopWatch()
     }
 
     //분 NumberPicker 변경
