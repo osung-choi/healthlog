@@ -30,6 +30,7 @@ class TimerActivity : AppCompatActivity() {
         timerViewModel = ViewModelProviders.of(this).get(TimerViewModel::class.java)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_timer)
         binding.viewModel = timerViewModel
+        binding.lifecycleOwner = this
 
         if (Build.VERSION.SDK_INT >= 26) {
             startForegroundService(Intent(this, TimerService::class.java))

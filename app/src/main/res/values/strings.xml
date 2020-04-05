@@ -13,6 +13,7 @@
     <string name="home_second">Home Second</string>
     <string name="title">나의 운동일지</string>
     <string name="timer_title">운동 시작</string>
+    <string name="log_title">기록</string>
 
     <string name="start_exersice">오늘 운동하기</string>
 
@@ -21,9 +22,12 @@
     <string name="btn_pause">중지</string>
     <string name="btn_restart">계속</string>
     <string name="btn_clear">초기화</string>
+    <string name="btn_add_item">추가</string>
 
     <string name="dialog_continue_exersice">운동을 계속 하실껀가요?</string>
     <string name="dialog_btn_continue">계속</string>
     <string name="dialog_btn_finish">종료</string>
+
+    <string name="search_exercise">종목을 검색하세요.</string>
 
 </resources>

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.healthlog">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -11,11 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".log.LogActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".timer.TimerActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="user"/>
-        <!--            android:screenOrientation="user" 화면 회전-->
+            android:screenOrientation="user"
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- android:screenOrientation="user" 화면 회전 -->
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -26,8 +27,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".timer.TimerService"></service>
 
+        <service android:name=".timer.TimerService" />
     </application>
 
 </manifest>

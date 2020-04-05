@@ -1,4 +1,4 @@
-package com.example.healthlog.timer
+package com.example.healthlog.model
 
 
 import io.reactivex.rxjava3.core.Observable

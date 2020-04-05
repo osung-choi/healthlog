@@ -10,4 +10,5 @@
     <color name="red">#fc575c</color>
     <color name="text_black">#dd000000</color>
     <color name="text_white">#ffffff</color>
+    <color name="text_hint">#555555</color>
 </resources>

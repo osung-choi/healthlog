@@ -12,7 +12,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.healthlog.R
 import com.example.healthlog.databinding.FragmentMainBinding
+import com.example.healthlog.log.LogActivity
 import com.example.healthlog.timer.TimerActivity
+import com.example.healthlog.utils.Define
+import com.example.healthlog.utils.Utils
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
 
@@ -54,5 +57,11 @@ class MainFragment : Fragment() {
             activity!!.overridePendingTransition(R.anim.slide_right_in, R.anim.no_move) //showAnim , hideAnum
         })
 
+        mainViewModel.editExerciseLog.observe(viewLifecycleOwner, Observer {
+            startActivity(Intent(context, LogActivity::class.java)
+                .putExtra(Define.INTENT_WRITE_LOG_DATE, it))
+
+            activity!!.overridePendingTransition(R.anim.slide_right_in, R.anim.no_move)
+        })
     }
 }

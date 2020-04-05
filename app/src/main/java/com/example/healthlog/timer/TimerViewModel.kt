@@ -8,6 +8,7 @@ import androidx.databinding.ObservableField
 import androidx.databinding.ObservableInt
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.example.healthlog.model.TimerUtils
 import com.example.mvvmtest.utils.SingleLiveEvent
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 
