@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.healthlog.R
-import com.example.healthlog.data.ExerciseLog
+import com.example.healthlog.database.entitiy.ExerciseLog
 
 class LogAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val logDataList = arrayListOf<ExerciseLog>()

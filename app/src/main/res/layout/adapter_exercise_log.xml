@@ -1,28 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
             name="log"
-            type="com.example.healthlog.data.ExerciseLog" />
+            type="com.example.healthlog.database.entitiy.ExerciseLog" />
 
     </data>
     <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:padding="8dp"
+        android:layout_height="130dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
         app:cardCornerRadius="5dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:padding="8dp">
+
+            <ImageButton
+                android:id="@+id/setDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_close"
+                android:background="@android:color/transparent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+            
+            <TextView
+                android:id="@+id/exerciseTitle"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:gravity="center"
+                android:singleLine="true"
+                app:layout_constraintTop_toTopOf="@id/subSet"
+                app:layout_constraintBottom_toBottomOf="@id/subSet"
+                app:layout_constraintLeft_toRightOf="@id/setDelete"
+                app:layout_constraintRight_toLeftOf="@id/subSet"/>
+            
+            <ImageButton
+                android:id="@+id/subSet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_chevron_left"
+                android:background="@android:color/transparent"
+                android:layout_marginRight="13dp"
+                app:layout_constraintTop_toTopOf="@id/countSet"
+                app:layout_constraintRight_toLeftOf="@id/countSet"/>
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:text="asdasdasdasdasdadasd"
-                app:layout_constraintTop_toTopOf="parent"/>
+                android:id="@+id/countSet"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginRight="13dp"
+                android:gravity="center"
+                android:textSize="15sp"
+                app:layout_constraintTop_toTopOf="@id/addSet"
+                app:layout_constraintBottom_toBottomOf="@id/addSet"
+                app:layout_constraintRight_toLeftOf="@id/addSet"
+                tools:text="3"/>
+
+
+            <ImageButton
+                android:id="@+id/addSet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_chevron_right"
+                android:background="@android:color/transparent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent"/>
+
+            <TextView
+                android:id="@+id/weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/weight"
+                android:textSize="15sp"
+                app:layout_constraintTop_toBottomOf="@id/setDelete"
+                app:layout_constraintBottom_toTopOf="@id/numberOfTime"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+
+            <TextView
+                android:id="@+id/numberOfTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/number_of_time"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/weight"
+                app:layout_constraintLeft_toLeftOf="parent"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/setList"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginLeft="10dp"
+                app:layout_constraintTop_toTopOf="@id/weight"
+                app:layout_constraintBottom_toBottomOf="@id/numberOfTime"
+                app:layout_constraintLeft_toRightOf="@id/weight"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

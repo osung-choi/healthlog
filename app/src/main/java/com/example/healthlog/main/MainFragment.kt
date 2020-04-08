@@ -2,6 +2,7 @@ package com.example.healthlog.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +12,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.healthlog.R
+import com.example.healthlog.database.HealthLogDB
+import com.example.healthlog.database.entitiy.ExerciseLog
+import com.example.healthlog.database.entitiy.Part
 import com.example.healthlog.databinding.FragmentMainBinding
 import com.example.healthlog.log.LogActivity
 import com.example.healthlog.timer.TimerActivity
 import com.example.healthlog.utils.Define
-import com.example.healthlog.utils.Utils
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
+import kotlin.concurrent.thread
 
 
 class MainFragment : Fragment() {
@@ -31,6 +35,27 @@ class MainFragment : Fragment() {
 
         initUi()
         initObserve()
+
+        //example
+        Thread(Runnable {
+            HealthLogDB.getInstance(context!!).getPartDAO().insert(
+                Part("가슴"),
+                Part("등"),
+                Part("이두"),
+                Part("삼두"),
+                Part("어깨"),
+                Part("대퇴사두"),
+                Part("대퇴이두")
+            )
+
+            HealthLogDB.getInstance(context!!).getPartDAO().selectPart()
+                .subscribe { it ->
+                    it.forEach {
+                        Log.d("asd", it.name)
+                    }
+                }
+        }).start()
+
 
         return binding.root
     }

@@ -8,10 +8,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.healthlog.R
-import com.example.healthlog.data.ExerciseLog
 import com.example.healthlog.databinding.ActivityLogBinding
 import com.example.healthlog.utils.Utils
-import kotlin.math.log
 
 
 class LogActivity : AppCompatActivity() {
@@ -54,8 +52,8 @@ class LogActivity : AppCompatActivity() {
     private fun initObserve() {
         with(logViewModel) {
             addExercise.observe(this@LogActivity, Observer {
-                val logItem = ExerciseLog()
-                logAdapter.setItem(logItem)
+//                val logItem = Log()
+//                logAdapter.setItem(logItem)
 
                 clearSearchText()
             })
