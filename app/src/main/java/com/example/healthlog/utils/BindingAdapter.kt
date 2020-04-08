@@ -3,6 +3,7 @@ package com.example.healthlog.utils
 import android.content.Context
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
@@ -69,5 +70,19 @@ object BindingAdapter {
     @BindingAdapter("setIntToTime")
     fun setIntToTime(view: TextView, value: Int) {
         view.text = String.format("%02d", value)
+    }
+
+    @JvmStatic
+    @BindingAdapter("onEditorActionDone")
+    fun setOnEditorActionDone(view: TextView, listener: (() -> Unit)?) {
+        listener?.let {
+            view.setOnEditorActionListener { _, actionId, _ ->
+                if(actionId == EditorInfo.IME_ACTION_DONE) {
+                    it()
+                }
+
+                false
+            }
+        }
     }
 }

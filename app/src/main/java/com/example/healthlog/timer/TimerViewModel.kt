@@ -9,14 +9,14 @@ import androidx.databinding.ObservableInt
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.healthlog.model.TimerUtils
-import com.example.mvvmtest.utils.SingleLiveEvent
+import com.example.mvvmtest.utils.SingleLiveData
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 
 class TimerViewModel: ViewModel() {
-    private val _mMinimalWindowStatus = SingleLiveEvent<Boolean>() //최소화 여부
+    private val _mMinimalWindowStatus = SingleLiveData<Boolean>() //최소화 여부
     val mMinimalWindowStatus : LiveData<Boolean> = _mMinimalWindowStatus
 
-    private val _mStartStopWatch = SingleLiveEvent<Pair<Int, Int>>()
+    private val _mStartStopWatch = SingleLiveData<Pair<Int, Int>>()
     val mStartStopWatch : LiveData<Pair<Int, Int>> = _mStartStopWatch
 
     val exersiceAllTimer = ObservableField<String>()

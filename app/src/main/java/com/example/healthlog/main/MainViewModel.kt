@@ -5,10 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.healthlog.model.DateUtils
-import com.example.mvvmtest.utils.SingleLiveEvent
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
-import java.text.SimpleDateFormat
-import java.util.*
 
 class MainViewModel : ViewModel() {
     //운동 시작 버튼 LiveData

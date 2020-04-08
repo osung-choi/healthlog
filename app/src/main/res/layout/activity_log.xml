@@ -69,9 +69,12 @@
                         android:layout_height="wrap_content"
                         android:textColorHint="@color/text_hint"
                         android:hint="@string/search_exercise"
+                        android:imeOptions="actionDone"
+                        android:inputType="text"
                         android:paddingStart="8dp"
                         android:onTextChanged="@{viewModel.onContentTextChanged}"
-                        android:completionThreshold="1"/>
+                        android:completionThreshold="1"
+                        onEditorActionDone="@{viewModel.searchDone}"/>
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -82,11 +85,21 @@
                     android:theme="@style/AppTheme.Button"
                     android:background="@drawable/round_primary_button"
                     android:text="@string/btn_add_item"
+                    android:layout_marginRight="8dp"
+                    android:onClick="@{viewModel.addExerciseClick}"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintBaseline_toBaselineOf="@id/editSearchView"
                     app:layout_constraintLeft_toRightOf="@id/editSearchView"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/logList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
+

@@ -1,22 +1,24 @@
 package com.example.healthlog.log
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.EditText
+import android.widget.ArrayAdapter
+import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.healthlog.R
+import com.example.healthlog.data.ExerciseLog
 import com.example.healthlog.databinding.ActivityLogBinding
+import com.example.healthlog.utils.Utils
+import kotlin.math.log
+
 
 class LogActivity : AppCompatActivity() {
 
     private lateinit var logViewModel: LogViewModel
     private lateinit var binding: ActivityLogBinding
-    private lateinit var searchAdapter: SearchAdapter
-
-    private val searchList = arrayListOf<String>()
+    private lateinit var logAdapter: LogAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,18 +41,38 @@ class LogActivity : AppCompatActivity() {
 
         binding.toolbarTitle.text = getString(R.string.log_title)
 
-        searchAdapter = SearchAdapter(this, android.R.layout.simple_dropdown_item_1line, searchList)
-        binding.autoSearchView.setAdapter(searchAdapter)
+        with(binding.logList) {
+            layoutManager = LinearLayoutManager(this@LogActivity)
+            logAdapter = LogAdapter()
+
+            adapter = logAdapter
+        }
+
+        logViewModel.getExerciseList()
     }
 
     private fun initObserve() {
-        logViewModel.searchTextChange.observe(this, Observer {
-            setAutoSearchView(it)
-        })
+        with(logViewModel) {
+            addExercise.observe(this@LogActivity, Observer {
+                val logItem = ExerciseLog()
+                logAdapter.setItem(logItem)
+
+                clearSearchText()
+            })
+
+            exerciseList.observe(this@LogActivity, Observer {
+                binding.autoSearchView.setAdapter(ArrayAdapter(
+                    this@LogActivity, android.R.layout.simple_dropdown_item_1line, it)
+                )
+            })
+        }
     }
 
-    private fun setAutoSearchView(searchList: List<String>) {
-        searchAdapter.setData(searchList)
-        searchAdapter.notifyDataSetChanged()
+    private fun clearSearchText() {
+        binding.autoSearchView.setText("")
+        binding.autoSearchView.clearFocus()
+
+        Utils.keyboardHide(this, binding.autoSearchView)
     }
+
 }

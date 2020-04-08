@@ -1,26 +1,34 @@
 package com.example.healthlog.log
 
-import android.text.Editable
-import android.text.TextWatcher
+import android.view.View
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.mvvmtest.utils.SingleLiveData
 
 class LogViewModel: ViewModel() {
-    val exerciseList = arrayListOf("벤치프레스(가슴)", "덤벨프레스(가슴)", "클로즈그립벤치프레스(삼두)") //추후 DB저장 형태 변경(ExerciseList)
-    val list = arrayListOf<String>()
-    private val _searchTextChange = MutableLiveData<List<String>>()
-    val searchTextChange: LiveData<List<String>> = _searchTextChange
+
+    private val _addExercise = SingleLiveData<String>()
+    val addExercise: LiveData<String> = _addExercise
+
+    private val _exerciseList = SingleLiveData<List<String>>()
+    val exerciseList: LiveData<List<String>> = _exerciseList
+
+    private var searchText = ""
+
+    val addExerciseClick = View.OnClickListener {
+        _addExercise.setValue(searchText)
+    }
+
+    val searchDone = {
+        _addExercise.setValue(searchText)
+    }
 
     fun onContentTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-        list.clear()
+        searchText = s.toString()
+    }
 
-        exerciseList.forEach {
-            if(it.contains(s.toString()))
-                list.add(it)
-        }
-
-        _searchTextChange.value = list
+    fun getExerciseList() {
+        _exerciseList.setValue(arrayListOf("벤치프레스(가슴)", "덤벨프레스(가슴)", "클로즈그립벤치프레스(삼두)")) //추후 DB조회
     }
 }
 
