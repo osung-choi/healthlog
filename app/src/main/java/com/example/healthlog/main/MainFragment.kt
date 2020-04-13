@@ -13,15 +13,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.healthlog.R
 import com.example.healthlog.database.HealthLogDB
-import com.example.healthlog.database.entitiy.ExerciseLog
-import com.example.healthlog.database.entitiy.Part
 import com.example.healthlog.databinding.FragmentMainBinding
 import com.example.healthlog.log.LogActivity
 import com.example.healthlog.timer.TimerActivity
 import com.example.healthlog.utils.Define
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.CalendarMode
-import kotlin.concurrent.thread
+import io.reactivex.schedulers.Schedulers
 
 
 class MainFragment : Fragment() {
@@ -37,24 +35,17 @@ class MainFragment : Fragment() {
         initObserve()
 
         //example
-        Thread(Runnable {
-            HealthLogDB.getInstance(context!!).getPartDAO().insert(
-                Part("가슴"),
-                Part("등"),
-                Part("이두"),
-                Part("삼두"),
-                Part("어깨"),
-                Part("대퇴사두"),
-                Part("대퇴이두")
-            )
-
-            HealthLogDB.getInstance(context!!).getPartDAO().selectPart()
-                .subscribe { it ->
-                    it.forEach {
-                        Log.d("asd", it.name)
-                    }
-                }
-        }).start()
+//        Thread(Runnable {
+//
+//            HealthLogDB.getInstance()?.let {
+//                it.getExerciseDao().selectExerciseAllItem()
+//                    .subscribe { it ->
+//                        it.forEach {
+//                            Log.d("asd", it.toString())
+//                        }
+//                    }
+//            }
+//        }).start()
 
 
         return binding.root

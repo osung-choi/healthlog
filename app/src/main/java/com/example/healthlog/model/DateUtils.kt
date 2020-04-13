@@ -1,6 +1,6 @@
 package com.example.healthlog.model
 
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.Observable
 import java.text.SimpleDateFormat
 import java.util.*
 

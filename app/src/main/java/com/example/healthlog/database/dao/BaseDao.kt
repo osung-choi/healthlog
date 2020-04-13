@@ -3,7 +3,7 @@ package com.example.healthlog.database.dao
 import androidx.room.*
 
 @Dao
-interface BaseDAO<T> {
+interface BaseDao<T> {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg obj: T)
 

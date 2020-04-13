@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.healthlog.R
 import com.example.healthlog.databinding.ActivityLogBinding
+import com.example.healthlog.utils.Define
 import com.example.healthlog.utils.Utils
 
 
@@ -17,6 +18,7 @@ class LogActivity : AppCompatActivity() {
     private lateinit var logViewModel: LogViewModel
     private lateinit var binding: ActivityLogBinding
     private lateinit var logAdapter: LogAdapter
+    private lateinit var logDate: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +27,8 @@ class LogActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_log)
         binding.viewModel = logViewModel
         binding.lifecycleOwner = this
+
+        logDate = intent.getStringExtra(Define.INTENT_WRITE_LOG_DATE)
 
         initUi()
         initObserve()
@@ -39,6 +43,7 @@ class LogActivity : AppCompatActivity() {
 
         binding.toolbarTitle.text = getString(R.string.log_title)
 
+
         with(binding.logList) {
             layoutManager = LinearLayoutManager(this@LogActivity)
             logAdapter = LogAdapter()
@@ -46,15 +51,13 @@ class LogActivity : AppCompatActivity() {
             adapter = logAdapter
         }
 
-        logViewModel.getExerciseList()
+
+        logViewModel.getExerciseList(logDate)
     }
 
     private fun initObserve() {
         with(logViewModel) {
-            addExercise.observe(this@LogActivity, Observer {
-//                val logItem = Log()
-//                logAdapter.setItem(logItem)
-
+            addExerciseLog.observe(this@LogActivity, Observer {
                 clearSearchText()
             })
 

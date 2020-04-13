@@ -98,7 +98,8 @@
             android:id="@+id/logList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            setExerciseItem="@{viewModel.addExerciseLog}"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

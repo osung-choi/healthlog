@@ -1,6 +1,7 @@
 package com.example.healthlog.model
 
-import io.reactivex.rxjava3.subjects.Subject
+import io.reactivex.subjects.Subject
+
 
 interface TimerImpl {
     fun getStopWatchSubject(): Subject<Pair<Int, Int>>

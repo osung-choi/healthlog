@@ -1,18 +1,18 @@
 package com.example.healthlog.utils
 
-import android.content.Context
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import androidx.databinding.ObservableBoolean
+import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.RecyclerView
 import com.example.healthlog.R
+import com.example.healthlog.database.entitiy.ExerciseLog
+import com.example.healthlog.log.LogAdapter
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
-import kotlinx.android.synthetic.main.activity_timer.view.*
 
 object BindingAdapter {
 
@@ -83,6 +83,14 @@ object BindingAdapter {
 
                 false
             }
+        }
+    }
+
+    @JvmStatic
+    @BindingAdapter("setExerciseItem")
+    fun setExerciseItem(recyclerView: RecyclerView, list: LiveData<ArrayList<ExerciseLog>>) {
+        list.value?.let {
+            (recyclerView.adapter as LogAdapter).setList(it)
         }
     }
 }

@@ -5,7 +5,7 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "ExerciseItem",
+    primaryKeys = ["name", "part"],
     foreignKeys = [
         ForeignKey (
             entity = Part::class,
@@ -15,8 +15,8 @@ import androidx.room.PrimaryKey
     ]
 )
 
-data class Exercise(
-    @PrimaryKey(autoGenerate = true) val seq: Int, //Exercise Seq
+data class ExerciseItem(
     val name: String, //운동 명
     val part: String //운동 부위
 )
+

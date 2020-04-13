@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.example.healthlog.model.TimerUtils
 import com.example.mvvmtest.utils.SingleLiveData
-import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.disposables.CompositeDisposable
 
 class TimerViewModel: ViewModel() {
     private val _mMinimalWindowStatus = SingleLiveData<Boolean>() //최소화 여부

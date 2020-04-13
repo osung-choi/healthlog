@@ -26,6 +26,8 @@
     
     <string name="weight">무게</string>
     <string name="number_of_time">횟수</string>
+    <string name="part_dot">"종목 : "</string>
+    <string name="unit_dot">"단위 : "</string>
 
     <string name="dialog_continue_exersice">운동을 계속 하실껀가요?</string>
     <string name="dialog_btn_continue">계속</string>
