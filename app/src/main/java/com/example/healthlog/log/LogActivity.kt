@@ -20,6 +20,7 @@ class LogActivity : AppCompatActivity() {
     private lateinit var logAdapter: LogAdapter
     private lateinit var logDate: String
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 

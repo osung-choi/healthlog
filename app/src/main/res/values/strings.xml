@@ -23,9 +23,10 @@
     <string name="btn_restart">계속</string>
     <string name="btn_clear">초기화</string>
     <string name="btn_add_item">추가</string>
-    
-    <string name="weight">무게</string>
-    <string name="number_of_time">횟수</string>
+
+    <string name="title_set">세트</string>
+    <string name="title_weight">무게</string>
+    <string name="title_number_of_time">횟수</string>
     <string name="part_dot">"종목 : "</string>
     <string name="unit_dot">"단위 : "</string>
 

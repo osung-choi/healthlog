@@ -7,7 +7,7 @@ import io.reactivex.Maybe
 
 
 @Dao
-interface ExerciseDao: BaseDao<ExerciseItem> {
+interface ExerciseItemDao: BaseDao<ExerciseItem> {
     @Query("SELECT * FROM ExerciseItem")
     fun selectExerciseAllItem() : Maybe<List<ExerciseItem>>
 

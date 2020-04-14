@@ -5,7 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.healthlog.database.HealthLogDB
+import com.example.healthlog.database.entitiy.ExerciseItem
 import com.example.healthlog.database.entitiy.ExerciseLog
+import com.example.healthlog.database.entitiy.OneSet
+import com.example.healthlog.utils.Define
 import com.example.healthlog.utils.Utils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -59,7 +62,7 @@ class LogViewModel: ViewModel() {
                 .filter { searchName -> Utils.checkExerciseSearchName(searchName) }
                 .map { okName -> Utils.makeSearchNameToExerciseItem(okName) }
                 .filter { item -> db.getExerciseDao().selectExerciseItem(item.name, item.part) > 0}
-                .map { ExerciseLog(0, date, it, "kg",3) } //디폴트 세트 수 3
+                .map { ExerciseLog(0, date, it, "kg", Define.DEFAULT_SET_COUNT) } //디폴트 세트 수 3
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { exerciseLog ->
                     val list = _addExerciseLog.value

@@ -1,9 +1,7 @@
 package com.example.healthlog.database.entitiy
 
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
+import com.example.healthlog.utils.Define
 
 @Entity(
 //    foreignKeys = [
@@ -20,16 +18,29 @@ data class ExerciseLog (
     val unit: String,
     var setCount: Int //진행한 세트 수
 ) {
-//    private val setList = arrayListOf<OneSet>()
+    @Ignore val setList = ArrayList<OneSet>()
+
+    init {
+        setDefaultSetList(Define.DEFAULT_SET_COUNT)
+    }
+
+    private fun setDefaultSetList(count: Int) {
+        for(i in 1 .. count) {
+            setList.add(OneSet(0, 0, setList.size + 1, 0, 0))
+        }
+    }
+
+//    private fun defaultSetItem(exerciseSeq: Int) = OneSet(0, exerciseSeq, setList.size + 1, 0, 0)
 //
-//    fun addSetItem(itemCount: Int) {
-//        for(i in 0 until itemCount) {
-//            setList.add(OneSet(0, seq, setList.size + 1, 0, 0))
-//        }
+//    fun addItem(exerciseSeq: Int) = if(setList.size > 0)
+//        setList.add(setList.get(setList.lastIndex))
+//    else
+//        setList.add(defaultSetItem(exerciseSeq))
+//
+//    fun removeLastItem() {
+//        val index = setList.size-1
+//        setList.removeAt(index)
 //    }
-//
-//    fun removeSetItem(index: Int) = setList.removeAt(index)
-//    fun getSetList() = setList
 
     override fun equals(other: Any?): Boolean {
         if (other is ExerciseLog ){

@@ -1,18 +1,14 @@
 package com.example.healthlog.log
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.healthlog.database.entitiy.ExerciseItem
 import com.example.healthlog.database.entitiy.ExerciseLog
 import com.example.healthlog.databinding.AdapterExerciseLogBinding
 import com.example.healthlog.diff.ExerciseLogDiffCallback
+import com.example.healthlog.utils.Define
 
 class LogAdapter: RecyclerView.Adapter<LogAdapter.LogViewHolder>() {
     private var logDataList = arrayListOf<ExerciseLog>()
@@ -24,24 +20,37 @@ class LogAdapter: RecyclerView.Adapter<LogAdapter.LogViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
-            = LogViewHolder(AdapterExerciseLogBinding.inflate(LayoutInflater.from(parent!!.context), parent, false))
+            = LogViewHolder(AdapterExerciseLogBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     override fun getItemCount() = logDataList.size
     override fun onBindViewHolder(holder: LogViewHolder, position: Int) = holder.bind(logDataList[position])
 
     inner class LogViewHolder(binding: AdapterExerciseLogBinding) : RecyclerView.ViewHolder(binding.root) {
         private val binding = binding
+        private val setAdapter by lazy { SetAdapter(logDataList[adapterPosition].setList) }
 
         fun bind(item : ExerciseLog) {
             binding.logData = item
+            binding.setList.run {
+                layoutManager = LinearLayoutManager(binding.root.context, RecyclerView.HORIZONTAL, false)
+                adapter = setAdapter
+            }
 
             binding.subSet.setOnClickListener {
-                item.setCount = item.setCount - 1
-                binding.countSet.text = item.setCount.toString()
+                if(item.setCount > 1) {
+                    item.setCount = item.setCount - 1
+                    binding.countSet.text = item.setCount.toString()
+
+                    setAdapter.removeLastItem()
+                }
             }
 
             binding.addSet.setOnClickListener {
-                item.setCount = item.setCount + 1
-                binding.countSet.text = item.setCount.toString()
+                if(item.setCount < 30) {
+                    item.setCount = item.setCount + 1
+                    binding.countSet.text = item.setCount.toString()
+
+                    setAdapter.addItem()
+                }
             }
 
             binding.setDelete.setOnClickListener {

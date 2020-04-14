@@ -8,12 +8,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.example.healthlog.database.dao.ExerciseDao
+import com.example.healthlog.database.dao.ExerciseItemDao
+import com.example.healthlog.database.dao.ExerciseLogDao
 import com.example.healthlog.database.dao.PartDao
 import com.example.healthlog.database.entitiy.ExerciseItem
 import com.example.healthlog.database.entitiy.ExerciseLog
-import com.example.healthlog.database.entitiy.Part
 import com.example.healthlog.database.entitiy.OneSet
+import com.example.healthlog.database.entitiy.Part
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
 
@@ -22,7 +23,8 @@ import io.reactivex.schedulers.Schedulers
     version = 1)
 abstract class HealthLogDB: RoomDatabase() {
     abstract fun getPartDao() : PartDao
-    abstract fun getExerciseDao() : ExerciseDao
+    abstract fun getExerciseDao() : ExerciseItemDao
+    abstract fun getExerciseLogDao() : ExerciseLogDao
 
     companion object {
         @Volatile private var INSTANCE: HealthLogDB? = null
