@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.healthlog.database.HealthLogDB
-import com.example.healthlog.database.entitiy.ExerciseItem
 import com.example.healthlog.database.entitiy.ExerciseLog
 import com.example.healthlog.database.entitiy.OneSet
 import com.example.healthlog.utils.Define
@@ -13,6 +12,7 @@ import com.example.healthlog.utils.Utils
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.schedulers.Schedulers
 
 class LogViewModel: ViewModel() {
@@ -38,6 +38,28 @@ class LogViewModel: ViewModel() {
     fun onContentTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
         searchText = s.toString()
     }
+
+    fun saveExerciseLogData() {
+        HealthLogDB.getInstance()?.let { db ->
+            val logList = _addExerciseLog.value!!
+
+            val insertSource = Observable.fromIterable(logList)
+                .subscribeOn(Schedulers.io())
+                .map { db.getExerciseLogDao().insert(it) }
+
+            val objectSource = Observable.fromIterable(logList)
+
+            Observable.zip(objectSource, insertSource, BiFunction { logData: ExerciseLog, seq: Long ->
+                Observable.fromIterable(logData.setList)
+                    .subscribeOn(Schedulers.io())
+                    .map {
+                        it.exerciseSeq = seq.toInt()
+                        db.getOneSetDao().insert(it)
+                    }.subscribe()
+            }).subscribe()
+        }
+    }
+
 
     fun getExerciseList(date: String) {
         this.date = date

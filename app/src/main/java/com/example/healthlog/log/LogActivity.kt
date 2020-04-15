@@ -35,6 +35,12 @@ class LogActivity : AppCompatActivity() {
         initObserve()
     }
 
+    override fun onPause() {
+        super.onPause()
+
+        binding.viewModel?.saveExerciseLogData()
+    }
+
     private fun initUi() {
         setSupportActionBar(binding.toolBar)
         supportActionBar?.let {

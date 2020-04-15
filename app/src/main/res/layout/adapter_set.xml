@@ -38,6 +38,7 @@
             android:textColor="@color/text_black"
             android:gravity="center"
             android:inputType="numberSigned"
+            android:nextFocusRight="@id/editSetWeight"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/editSetWeight"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

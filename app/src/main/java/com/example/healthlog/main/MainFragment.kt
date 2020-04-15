@@ -35,17 +35,23 @@ class MainFragment : Fragment() {
         initObserve()
 
         //example
-//        Thread(Runnable {
-//
-//            HealthLogDB.getInstance()?.let {
-//                it.getExerciseDao().selectExerciseAllItem()
-//                    .subscribe { it ->
-//                        it.forEach {
-//                            Log.d("asd", it.toString())
-//                        }
-//                    }
-//            }
-//        }).start()
+        Thread(Runnable {
+
+            HealthLogDB.getInstance()?.let {
+                it.getOneSetDao().selectAllOnSet()
+                    .subscribe {
+                        it.forEach {
+                            Log.d("asd", it.toString())
+                        }
+                    }
+                it.getExerciseLogDao().selectAllExerciseLog()
+                    .subscribe {
+                        it.forEach {
+                            Log.d("asd", it.toString())
+                        }
+                    }
+            }
+        }).start()
 
 
         return binding.root
