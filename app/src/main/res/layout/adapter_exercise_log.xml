@@ -3,7 +3,7 @@
     <data>
         <variable
             name="logData"
-            type="com.example.healthlog.database.entitiy.ExerciseLog" />
+            type="com.example.healthlog.model.database.entitiy.ExerciseLog" />
     </data>
 
     <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -160,12 +160,13 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/setList"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginLeft="10dp"
                 app:layout_constraintTop_toTopOf="@id/set"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toRightOf="@id/weight"/>
+                app:layout_constraintLeft_toRightOf="@id/weight"
+                app:layout_constraintRight_toRightOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

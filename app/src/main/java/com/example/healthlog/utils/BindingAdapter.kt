@@ -9,8 +9,8 @@ import androidx.databinding.BindingAdapter
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.healthlog.R
-import com.example.healthlog.database.entitiy.ExerciseLog
-import com.example.healthlog.log.LogAdapter
+import com.example.healthlog.model.database.entitiy.ExerciseLog
+import com.example.healthlog.adapter.LogAdapter
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener
 

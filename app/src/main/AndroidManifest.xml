@@ -12,10 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:name=".MyApplication">
-        <activity android:name=".log.LogActivity"
+        <service android:name=".service.TimerService" />
+
+        <activity android:name=".view.LogActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".timer.TimerActivity"
+            android:name=".view.TimerActivity"
             android:screenOrientation="user"
             android:theme="@style/AppTheme.NoActionBar" /> <!-- android:screenOrientation="user" 화면 회전 -->
         <activity
@@ -29,7 +31,6 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".timer.TimerService" />
     </application>
 
 </manifest>

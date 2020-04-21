@@ -3,7 +3,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.healthlog.log.LogViewModel" />
+            type="com.example.healthlog.viewmodel.LogViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -12,7 +12,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".log.LogActivity">
+        tools:context=".view.LogActivity">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/actionBar"

@@ -1,7 +1,7 @@
 package com.example.healthlog.diff
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.healthlog.database.entitiy.ExerciseLog
+import com.example.healthlog.model.database.entitiy.ExerciseLog
 
 class ExerciseLogDiffCallback(oldList: List<ExerciseLog>, newList: List<ExerciseLog>): DiffUtil.Callback() {
     val oldList = oldList

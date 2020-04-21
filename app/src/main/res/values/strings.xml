@@ -24,6 +24,7 @@
     <string name="btn_clear">초기화</string>
     <string name="btn_add_item">추가</string>
 
+    <string name="title_add_part">운동 종목 추가</string>
     <string name="title_set">세트</string>
     <string name="title_weight">무게</string>
     <string name="title_number_of_time">횟수</string>

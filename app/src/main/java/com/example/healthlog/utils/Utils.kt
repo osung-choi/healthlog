@@ -4,8 +4,7 @@ import android.content.Context
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import androidx.core.content.ContextCompat.getSystemService
-import com.example.healthlog.database.entitiy.ExerciseItem
+import com.example.healthlog.model.database.entitiy.ExerciseItem
 import java.util.regex.Pattern
 
 
