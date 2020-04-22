@@ -1,6 +1,7 @@
 package com.example.healthlog.view
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -37,6 +38,14 @@ class LogActivity : AppCompatActivity() {
         initObserve()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            android.R.id.home -> finish()
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -50,13 +59,13 @@ class LogActivity : AppCompatActivity() {
     }
 
     private fun initUi() {
-        setSupportActionBar(binding.toolBar)
+        setSupportActionBar(binding.logToolbar.toolBar)
         supportActionBar?.let {
             it.setDisplayHomeAsUpEnabled(true)
             it.setDisplayShowTitleEnabled(false)
         }
 
-        binding.toolbarTitle.text = getString(R.string.log_title)
+        binding.logToolbar.toolbarTitle.text = getString(R.string.log_title)
 
 
         with(binding.logList) {
